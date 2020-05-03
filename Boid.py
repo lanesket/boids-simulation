@@ -19,6 +19,8 @@ class Boid:
         self.max_speed = 5
         self.max_force = 0.2
         self.perception = 50
+        self.color = (random.randint(0, 255), random.randint(
+            0, 255), random.randint(0, 255))
 
     def edges(self, scr_w=1280, scr_h=720) -> None:
         if self.pos[0] > scr_w:
@@ -118,7 +120,10 @@ class Boid:
 
         return steering_force
 
-    def flock(self, boids: List):
+    def wind_effect(self, wind_deviation: np.ndarray) -> None:
+        self.acceleration += wind_deviation
+
+    def flock(self, boids: List) -> None:
         """
             Applies all the flock rules
         """
@@ -132,6 +137,6 @@ class Boid:
         self.acceleration += cohesion
         self.acceleration += separation
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, (0, 0, 0),
+    def draw(self, screen) -> None:
+        pygame.draw.rect(screen, self.color,
                          (self.pos[0], self.pos[1], self.w, self.h))
