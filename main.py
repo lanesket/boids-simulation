@@ -7,6 +7,7 @@ import numpy as np
 pygame.init()
 pygame.font.init()
 width, height = 1280, 720
+pygame.display.set_caption('Boids')
 screen = pygame.display.set_mode((width, height))
 font = pygame.font.SysFont('Times New Roman', 18)
 white = (255, 255, 255)
