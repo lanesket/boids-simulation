@@ -121,21 +121,45 @@ class Boid:
         return steering_force
 
     def wind_effect(self, wind_deviation: np.ndarray) -> None:
+        """
+            Applies the wind deviation
+        """
         self.acceleration += wind_deviation
 
-    def flock(self, boids: List) -> None:
+    def avoidance(self, obstacles: List, perception=100) -> None:
+        """
+            The avoidance rule for one obstacle
+        """
+        steering_force = np.array([0, 0]).astype(float)
+        total = 0
+        for o in obstacles:
+            dist = np.linalg.norm(self.pos - o.pos)
+            if dist < perception:
+                steering_force += (self.pos - o.pos) / dist
+                total += 1
+
+        if total:
+            steering_force /= total
+            if np.linalg.norm(steering_force) > 0:
+                steering_force = (
+                    steering_force / np.linalg.norm(steering_force)) * self.max_speed
+
+            if np.linalg.norm(steering_force) > self.max_force:
+                steering_force = (
+                    steering_force / np.linalg.norm(steering_force)) * self.max_force * 2
+
+        return steering_force
+
+    def flock(self, boids: List, obstacles) -> None:
         """
             Applies all the flock rules
         """
         self.acceleration = np.zeros(2).astype(float)
 
-        alignment = self.alignment(boids)
-        cohesion = self.cohesion(boids)
-        separation = self.separation(boids)
-
-        self.acceleration += alignment
-        self.acceleration += cohesion
-        self.acceleration += separation
+        self.acceleration += self.alignment(boids)
+        self.acceleration += self.cohesion(boids)
+        self.acceleration += self.separation(boids)
+        self.acceleration += self.avoidance(obstacles)
 
     def draw(self, screen) -> None:
         pygame.draw.rect(screen, self.color,
