@@ -17,8 +17,7 @@ boids = [Boid(random.randint(0, 1280), random.randint(0, 720), 10, 10)
 running = True
 
 is_wind = False
-wind_deviation = np.random.rand(2)
-
+wind_deviation = np.random.randint(-1, 1, 2)
 
 while running:
     screen.fill(white)
@@ -40,7 +39,7 @@ while running:
 
             if event.key == pygame.K_SPACE:
                 is_wind = not is_wind
-                wind_deviation = np.random.rand(2)
+                wind_deviation = np.random.randint(-1, 1, 2)
 
     clock.tick(60)
     text = font.render(f"Random Wind: {is_wind}", True, (0, 0, 0))
